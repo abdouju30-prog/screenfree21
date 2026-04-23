@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ScreenFree21">
+<meta name="theme-color" content="#0A1628">
+<title>ScreenFree21 — Screen Detox Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A1628;
+  --surface: #111D35;
+  --surface2: #172440;
+  --border: rgba(255,255,255,0.07);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.1);
+  --amber: #FFB347;
+  --amber-dim: rgba(255,179,71,0.1);
+  --red: #FF6B6B;
+  --red-dim: rgba(255,107,107,0.1);
+  --blue: #4FC3F7;
+  --blue-dim: rgba(79,195,247,0.1);
+  --text: rgba(255,255,255,0.85);
+  --text-dim: rgba(255,255,255,0.4);
+  --white: #FFFFFF;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* ── SPLASH ── */
+.splash {
+  position: fixed; inset: 0;
+  background: linear-gradient(160deg, #0A1628 0%, #0D2040 50%, #0A1628 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.6s;
+}
+
+.splash-icon { font-size: 64px; margin-bottom: 20px; animation: pulse-icon 2s infinite; }
+@keyframes pulse-icon { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+.splash-title {
+  font-family: 'Fraunces', serif;
+  font-size: 36px;
+  color: var(--white);
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+
+.splash-title span { color: var(--green); }
+
+.splash-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+.splash-bar {
+  width: 200px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.splash-bar-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 10px;
+  animation: load-bar 1.5s ease forwards;
+}
+
+@keyframes load-bar { from{width:0} to{width:100%} }
+
+/* ── LANG PICKER ── */
+.lang-screen {
+  display: none;
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 900;
+  padding: 60px 32px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-screen.show { display: flex; }
+
+.lang-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.lang-sub { font-size: 13px; color: var(--text-dim); text-align: center; margin-bottom: 40px; }
+
+.lang-options { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+
+.lang-option {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-option:hover, .lang-option.selected {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+
+.lang-flag { font-size: 28px; }
+.lang-name { font-family: 'Fraunces', serif; font-size: 18px; color: var(--white); }
+.lang-native { font-size: 13px; color: var(--text-dim); }
+
+.lang-continue {
+  margin-top: 32px;
+  width: 100%;
+  padding: 16px;
+  background: var(--green);
+  color: #0A1628;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0;
+  background: rgba(10,22,40,0.95);
+  backdrop-filter: blur(12px);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.nav-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  color: var(--white);
+}
+
+.nav-brand span { color: var(--green); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+
+.lang-switch {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex; gap: 4px;
+}
+
+.lang-switch button {
+  background: none; border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  cursor: pointer; padding: 2px 6px;
+  border-radius: 4px; transition: all 0.2s;
+  letter-spacing: 1px;
+}
+
+.lang-switch button.active {
+  background: var(--green);
+  color: #0A1628;
+  font-weight: 600;
+}
+
+.progress-ring {
+  width: 36px; height: 36px;
+  position: relative; cursor: pointer;
+}
+
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring circle { fill: none; stroke-width: 3; }
+.ring-bg { stroke: rgba(255,255,255,0.1); }
+.ring-fill { stroke: var(--green); stroke-linecap: round; transition: stroke-dashoffset 0.5s; }
+
+.progress-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--green);
+  font-weight: 500;
+}
+
+/* ── MAIN CONTENT ── */
+main { padding: 0 0 100px; }
+
+/* ── HERO ── */
+.hero {
+  padding: 32px 20px 28px;
+  background: linear-gradient(180deg, rgba(0,212,170,0.05) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-greeting {
+  font-size: 12px; color: var(--green);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; color: var(--white);
+  line-height: 1.2; margin-bottom: 16px;
+}
+
+.hero-title span { color: var(--green); font-style: italic; }
+
+.hero-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.hero-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 12px;
+  text-align: center;
+}
+
+.hero-stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; color: var(--white);
+  display: block; margin-bottom: 2px;
+}
+
+.hero-stat-num.green { color: var(--green); }
+.hero-stat-num.amber { color: var(--amber); }
+
+.hero-stat-label {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  overflow-x: auto;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none; border: none;
+  padding: 14px 16px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 20px; }
+.panel.active { display: block; }
+
+/* ── TODAY CARD ── */
+.today-card {
+  background: linear-gradient(135deg, #0D2040, #172440);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.today-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,212,170,0.08);
+}
+
+.today-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,212,170,0.3);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--green);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.today-day {
+  font-family: 'Fraunces', serif;
+  font-size: 32px; color: var(--white);
+  margin-bottom: 4px; line-height: 1;
+}
+
+.today-theme {
+  font-size: 14px; color: var(--text-dim);
+  margin-bottom: 20px; font-style: italic;
+}
+
+.today-duration {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--amber-dim);
+  border: 1px solid rgba(255,179,71,0.2);
+  border-radius: 8px; padding: 5px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--amber);
+}
+
+/* ── SECTION BLOCKS ── */
+.section-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.section-block-header {
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-block-icon { font-size: 18px; }
+
+.section-block-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-dim);
+  flex: 1;
+}
+
+.section-block-arrow {
+  font-size: 12px; color: var(--text-dim);
+  transition: transform 0.2s;
+}
+
+.section-block.open .section-block-arrow { transform: rotate(180deg); }
+
+.section-block-body {
+  display: none;
+  padding: 18px;
+}
+
+.section-block.open .section-block-body { display: block; }
+
+.section-text {
+  font-size: 14px; line-height: 1.8; color: var(--text);
+  margin-bottom: 12px;
+}
+
+.section-text:last-child { margin-bottom: 0; }
+
+.section-text-ar {
+  font-family: 'Amiri', serif;
+  font-size: 16px; line-height: 2;
+  direction: rtl; text-align: right;
+  color: rgba(0,212,170,0.8);
+  background: var(--green-dim);
+  border-radius: 8px; padding: 12px 14px;
+  margin-top: 10px;
+}
+
+/* ── REACTION BOX ── */
+.reaction-box {
+  background: var(--red-dim);
+  border: 1px solid rgba(255,107,107,0.2);
+  border-radius: 12px; padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.reaction-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 8px;
+}
+
+.reaction-list { list-style: none; }
+
+.reaction-list li {
+  font-size: 13px; color: #FFB3B3;
+  padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+  line-height: 1.5;
+}
+
+.reaction-list li::before { content: '→'; color: var(--red); flex-shrink: 0; }
+
+/* ── EXERCISE BOX ── */
+.exercise-box {
+  background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(0,212,170,0.04));
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: 14px; padding: 20px;
+  margin-bottom: 12px;
+}
+
+.exercise-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--green);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.exercise-steps { list-style: none; }
+
+.exercise-steps li {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid rgba(0,212,170,0.1);
+  font-size: 13px; color: var(--text); line-height: 1.6;
+}
+
+.exercise-steps li:last-child { border-bottom: none; }
+
+.step-num {
+  background: var(--green);
+  color: #0A1628;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+
+/* ── SCRIPT BOX ── */
+.script-box {
+  background: #0D2040;
+  border: 1px solid rgba(79,195,247,0.2);
+  border-radius: 12px; padding: 18px 20px;
+  margin-bottom: 12px;
+}
+
+.script-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: 10px;
+}
+
+.script-text {
+  font-size: 14px; color: #B3E5FC;
+  line-height: 1.8; font-style: italic;
+  margin-bottom: 10px;
+}
+
+.script-ar {
+  font-family: 'Amiri', serif;
+  font-size: 16px; direction: rtl; text-align: right;
+  color: rgba(0,212,170,0.7); line-height: 2;
+  border-top: 1px solid rgba(79,195,247,0.1);
+  padding-top: 10px;
+}
+
+/* ── EXAMPLE BOX ── */
+.example-box {
+  background: var(--amber-dim);
+  border: 1px solid rgba(255,179,71,0.2);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px; margin-bottom: 12px;
+}
+
+.example-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.example-text { font-size: 13px; color: #FFE0A3; line-height: 1.7; }
+
+/* ── DAILY LOG ── */
+.daily-log {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px;
+  margin-bottom: 12px;
+}
+
+.log-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.log-field { margin-bottom: 16px; }
+
+.log-label {
+  font-size: 12px; color: var(--text-dim);
+  margin-bottom: 6px; display: block;
+  letter-spacing: 0.5px;
+}
+
+.log-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.log-input:focus { border-color: var(--green); }
+
+.mood-selector {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+.mood-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mood-btn.selected {
+  background: var(--green-dim);
+  border-color: var(--green);
+  transform: scale(1.1);
+}
+
+.screen-time-input {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.time-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text);
+  cursor: pointer; transition: all 0.2s;
+}
+
+.time-btn:hover { background: var(--green-dim); border-color: var(--green); }
+
+.time-display {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; color: var(--white);
+  min-width: 70px; text-align: center;
+}
+
+.time-unit { font-size: 12px; color: var(--text-dim); }
+
+.complete-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--green);
+  color: #0A1628;
+  border: none; border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.complete-btn:hover { background: #00B896; }
+.complete-btn:disabled {
+  background: var(--surface2);
+  color: var(--text-dim); cursor: default;
+}
+
+.complete-btn.done {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+
+/* ── PROGRESS PANEL ── */
+.progress-panel { }
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px; margin-bottom: 20px;
+}
+
+.day-dot {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  position: relative;
+}
+
+.day-dot.completed {
+  background: var(--green-dim);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.day-dot.today {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-dim);
+}
+
+.day-dot.future { opacity: 0.4; cursor: default; }
+
+.day-dot .check {
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 14px; height: 14px;
+  background: var(--green);
+  border-radius: 50%;
+  font-size: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #0A1628;
+}
+
+/* Chart */
+.chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px;
+  margin-bottom: 16px;
+}
+
+.chart-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.chart-bars {
+  display: flex; align-items: flex-end;
+  gap: 4px; height: 100px;
+}
+
+.chart-bar-wrap {
+  flex: 1; display: flex;
+  flex-direction: column; align-items: center;
+  gap: 4px; height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar {
+  width: 100%; border-radius: 4px 4px 0 0;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,212,170,0.3);
+  min-height: 4px;
+  transition: height 0.5s ease;
+}
+
+.chart-bar.high { background: rgba(255,107,107,0.2); border-color: rgba(255,107,107,0.3); }
+.chart-bar.med { background: rgba(255,179,71,0.2); border-color: rgba(255,179,71,0.3); }
+.chart-bar.low { background: rgba(0,212,170,0.2); border-color: rgba(0,212,170,0.3); }
+
+.chart-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-dim); }
+
+/* Insights */
+.insight-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px;
+  margin-bottom: 10px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+
+.insight-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.insight-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.insight-text strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 12px; }
+
+/* ── TIPS PANEL ── */
+.tip-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.tip-card-header {
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+}
+
+.tip-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.tag-green { background: var(--green-dim); color: var(--green); }
+.tag-amber { background: var(--amber-dim); color: var(--amber); }
+.tag-red { background: var(--red-dim); color: var(--red); }
+.tag-blue { background: var(--blue-dim); color: var(--blue); }
+
+.tip-card-title {
+  font-size: 14px; font-weight: 600; color: var(--white);
+}
+
+.tip-card-body { padding: 16px 18px; font-size: 13px; color: var(--text); line-height: 1.8; }
+
+.tip-card-body .ar {
+  font-family: 'Amiri', serif;
+  font-size: 15px; direction: rtl; text-align: right;
+  color: rgba(0,212,170,0.7);
+  border-top: 1px solid var(--border);
+  margin-top: 10px; padding-top: 10px; line-height: 2;
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  background: rgba(10,22,40,0.97);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex; padding: 8px 0 20px;
+  z-index: 50;
+}
+
+.nav-item {
+  flex: 1; display: flex;
+  flex-direction: column; align-items: center;
+  gap: 4px; cursor: pointer;
+  padding: 6px 0;
+  transition: all 0.2s;
+}
+
+.nav-item-icon { font-size: 22px; }
+
+.nav-item-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.nav-item.active .nav-item-label { color: var(--green); }
+.nav-item.active .nav-item-icon { filter: drop-shadow(0 0 6px var(--green)); }
+
+/* ── WEEK SEPARATOR ── */
+.week-sep {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0 16px;
+}
+
+.week-sep::before, .week-sep::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.week-sep-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--green);
+  color: #0A1628;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 30px;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  z-index: 200;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── CELEBRATION ── */
+.celebration {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 500;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 40px;
+}
+
+.celebration.show { display: flex; }
+
+.celebration-card {
+  background: var(--surface);
+  border: 1px solid var(--green);
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+}
+
+.celebration-emoji { font-size: 64px; margin-bottom: 16px; }
+
+.celebration-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; color: var(--white);
+  margin-bottom: 8px;
+}
+
+.celebration-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; }
+
+.celebration-btn {
+  background: var(--green); color: #0A1628;
+  border: none; border-radius: 12px;
+  padding: 14px 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+}
+
+/* RTL */
+body.rtl { direction: rtl; }
+body.rtl .section-text-ar { direction: ltr; text-align: left; }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splash-icon">📱✂️</div>
+  <div class="splash-title">Screen<span>Free</span>21</div>
+  <div class="splash-sub">21-Day Screen Detox</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<!-- LANG SCREEN -->
+<div class="lang-screen" id="langScreen">
+  <div class="lang-title">Choose Your Language</div>
+  <div class="lang-sub">اختر لغتك · Choisissez votre langue</div>
+  <div class="lang-options">
+    <div class="lang-option selected" onclick="selectLang('en', this)">
+      <div class="lang-flag">🇬🇧</div>
+      <div><div class="lang-name">English</div><div class="lang-native">Main Language</div></div>
+    </div>
+    <div class="lang-option" onclick="selectLang('fr', this)">
+      <div class="lang-flag">🇫🇷</div>
+      <div><div class="lang-name">Français</div><div class="lang-native">French</div></div>
+    </div>
+    <div class="lang-option" onclick="selectLang('ar', this)">
+      <div class="lang-flag">🇸🇦</div>
+      <div><div class="lang-name">العربية</div><div class="lang-native">Arabic · Gulf</div></div>
+    </div>
+  </div>
+  <button class="lang-continue" onclick="startApp()">Start Program → ابدأ البرنامج</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CELEBRATION -->
+<div class="celebration" id="celebration">
+  <div class="celebration-card">
+    <div class="celebration-emoji">🎉</div>
+    <div class="celebration-title" id="cel-title">Day Complete!</div>
+    <div class="celebration-sub" id="cel-sub">You're making real progress. Keep going!</div>
+    <button class="celebration-btn" onclick="closeCelebration()">Continue →</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav" style="display:none">
+  <div class="nav-brand">Screen<span>Free</span>21</div>
+  <div class="nav-right">
+    <div class="lang-switch" id="langSwitch">
+      <button onclick="switchLang('en')" class="active" id="btn-en">EN</button>
+      <button onclick="switchLang('fr')" id="btn-fr">FR</button>
+      <button onclick="switchLang('ar')" id="btn-ar">AR</button>
+    </div>
+    <div class="progress-ring" onclick="showPanel('progress')" title="View Progress">
+      <svg width="36" height="36" viewBox="0 0 36 36">
+        <circle class="ring-bg" cx="18" cy="18" r="15"/>
+        <circle class="ring-fill" id="ringFill" cx="18" cy="18" r="15"
+          stroke-dasharray="94.2" stroke-dashoffset="94.2"/>
+      </svg>
+      <div class="progress-text" id="progressText">0%</div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="mainApp" style="display:none">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-greeting" id="heroGreeting">Day 1 of 21</div>
+    <div class="hero-title" id="heroTitle">Let's <span>begin</span> your journey</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num green" id="statDaysCompleted">0</span>
+        <span class="hero-stat-label" id="statLabel1">Days Done</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num amber" id="statStreak">0</span>
+        <span class="hero-stat-label" id="statLabel2">Streak</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="statScreenTime">—</span>
+        <span class="hero-stat-label" id="statLabel3">Hrs Today</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showPanel('today')" id="tab-today" data-key="tabToday">Today</button>
+    <button class="tab-btn" onclick="showPanel('progress')" id="tab-progress" data-key="tabProgress">Progress</button>
+    <button class="tab-btn" onclick="showPanel('tips')" id="tab-tips" data-key="tabTips">Tips & Scripts</button>
+  </div>
+
+  <!-- TODAY PANEL -->
+  <div class="panel active" id="panel-today">
+    <div id="todayContent"></div>
+  </div>
+
+  <!-- PROGRESS PANEL -->
+  <div class="panel" id="panel-progress">
+    <div class="days-grid" id="daysGrid"></div>
+    <div class="chart-wrap">
+      <div class="chart-title" id="chartTitle">Screen Time (hours/day)</div>
+      <div class="chart-bars" id="chartBars"></div>
+    </div>
+    <div id="insightsContainer"></div>
+  </div>
+
+  <!-- TIPS PANEL -->
+  <div class="panel" id="panel-tips">
+    <div id="tipsContent"></div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="nav-item active" onclick="showPanel('today')" id="nav-today">
+    <div class="nav-item-icon">📅</div>
+    <div class="nav-item-label" data-key="navToday">Today</div>
+  </div>
+  <div class="nav-item" onclick="showPanel('progress')" id="nav-progress">
+    <div class="nav-item-icon">📊</div>
+    <div class="nav-item-label" data-key="navProgress">Progress</div>
+  </div>
+  <div class="nav-item" onclick="showPanel('tips')" id="nav-tips">
+    <div class="nav-item-icon">💡</div>
+    <div class="nav-item-label" data-key="navTips">Tips</div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let lang = 'en';
+let data = {};
+
+const DAYS_DATA = [
+  { day:1, theme:"Observe Without Changing", duration:"10 min",
+    problem:{en:"Your child's brain produces dopamine (pleasure hormone) with every notification, bright color, or video. Stopping suddenly creates real withdrawal — like taking candy halfway through.",fr:"Le cerveau de votre enfant produit de la dopamine à chaque notification. Arrêter brutalement crée un manque réel.",ar:"دماغ طفلك يُفرز الدوبامين مع كل إشعار. التوقف المفاجئ يُسبب نقصاً حقيقياً مثل سحب الحلوى في المنتصف."},
+    reactions:{en:["Crying and screaming when screen turns off","Aggression or throwing things","Repeating 'just 5 more minutes!' constantly","Mood crashes immediately after device taken"],fr:["Pleurs et cris quand l'écran s'éteint","Agressivité, lancer des objets","Répéter 'encore 5 minutes!'"],ar:["بكاء وصراخ عند إيقاف الشاشة","عدوانية ورمي الأشياء","تكرار 'بس شوية كمان!' باستمرار"]},
+    exercise:{en:{title:"The Observation Exercise",steps:["Watch WITHOUT changing anything today","Note: how many hours does your child spend on screens?","Note: what times? Before sleep? During meals?","Note: exact reaction when you turn it off","Write everything in your journal below"]},fr:{title:"L'Exercice d'Observation",steps:["Regardez SANS rien changer aujourd'hui","Notez: combien d'heures par jour?","À quelle heure? Avant le sommeil? Pendant les repas?","Réaction exacte quand vous éteignez?"]},ar:{title:"تمرين الملاحظة",steps:["راقبي بدون تغيير أي شيء اليوم","دوّني: كم ساعة يقضي يومياً؟","في أي وقت؟ قبل النوم؟ أثناء الأكل؟","ردة فعله عند إيقاف الشاشة بالضبط؟"]}},
+    script:null, example:null },
+
+  { day:2, theme:"The Emergency Box", duration:"5 min",
+    problem:{en:"Parents give screens out of exhaustion, not bad parenting. It's a survival reflex. But there are 5-minute alternatives that calm children just as effectively.",fr:"Les parents donnent les écrans par épuisement. C'est un réflexe de survie. Mais il existe des alternatives de 5 minutes.",ar:"الآباء يعطون الشاشة بسبب الإرهاق. هذا رد فعل للبقاء. لكن توجد بدائل من 5 دقائق تُهدئ الطفل."},
+    reactions:{en:["Child immediately calms when given device","You feel guilty but also relieved","Cycle repeats: screen → calm → demand → screen"],fr:["L'enfant se calme immédiatement avec l'écran","Vous vous sentez coupable mais soulagé"],ar:["يهدأ الطفل فوراً عند إعطائه الجهاز","تشعرين بالذنب لكن بالارتياح أيضاً"]},
+    exercise:{en:{title:"Build Your Emergency Box",steps:["Find a physical box (any size)",  "Put inside: 3 small simple toys","Add: 1 picture book or magazine","Add: 1 ball or sensory toy","Rule: When exhausted → open box instead of phone"]},fr:{title:"Créez votre Boîte de Secours",steps:["Trouvez une boîte physique","Mettez: 3 petits jouets simples","Ajoutez: 1 livre d'images","Ajoutez: 1 balle","Règle: épuisé(e) → ouvrez la boîte"]},ar:{title:"جهّزي صندوق الطوارئ",steps:["اجدي صندوقاً حقيقياً","ضعي فيه: 3 ألعاب صغيرة بسيطة","أضيفي: كتاب صور","أضيفي: كرة","القاعدة: متعبة → افتحي الصندوق بدلاً من الهاتف"]}},
+    script:{en:'"I know you\'re tired. Let\'s see what\'s in the magic box today!"',fr:'"Je sais que tu es fatigué. Voyons ce qu\'il y a dans la boîte magique!"',ar:'"أعرف إنك تعبان. يلا نشوف شو في صندوق الأشياء الرائعة اليوم!"'},
+    example:{en:"Omar, 4, screamed every evening. His mom put cars and blocks in a box. Day 1 he sulked for 8 minutes. By Day 3 he ran to the box himself.",fr:"Omar, 4 ans, criait chaque soir. Sa maman a mis des voitures dans une boîte. Le 3ème jour il courait vers la boîte lui-même.",ar:"عمر (4 سنوات) كان يصرخ كل مساء. والدته وضعت سيارات وأحجاراً في صندوق. اليوم الثالث ركض إلى الصندوق بنفسه."} },
+
+  { day:3, theme:"The Bedtime Ritual", duration:"15 min",
+    problem:{en:"Blue light from screens blocks melatonin (sleep hormone). A child who sleeps badly is MORE irritable, less focused, and demands MORE screens the next day — a vicious cycle.",fr:"La lumière bleue bloque la mélatonine. Un enfant qui dort mal réclame PLUS d'écrans le lendemain.",ar:"الضوء الأزرق يمنع الميلاتونين. الطفل الذي لا ينام جيداً يطلب المزيد من الشاشات غداً."},
+    reactions:{en:["Refuses to go to bed without screen","Takes hours to fall asleep after screen time","Wakes up irritable and immediately asks for device","Nightmares or restless sleep"],fr:["Refuse de dormir sans écran","Met des heures à s'endormir après l'écran"],ar:["يرفض النوم بدون شاشة","يستغرق ساعات ليغفو بعد الشاشة"]},
+    exercise:{en:{title:"Create a Screen-Free Night Ritual",steps:["Start 30 minutes before bedtime","Dim the lights in the room","Tell (not read from tablet) one short story","Do 3 slow breaths together","Use same sequence every night — consistency is key"]},fr:{title:"Créez un Rituel du Soir",steps:["Commencez 30 min avant le coucher","Lumières tamisées","Racontez une histoire (pas sur tablette)","3 respirations lentes ensemble","Même séquence chaque soir"]},ar:{title:"أسّسي طقس مساء بدون شاشة",steps:["ابدأي 30 دقيقة قبل النوم","إضاءة خافتة","احكي قصة (ليست على التابلت)","3 أنفاس عميقة معاً","نفس التسلسل كل ليلة — الانتظام هو المفتاح"]}},
+    script:{en:'"Sweetheart, the screen is tired just like us. It\'s resting tonight. Let\'s tell a story together instead."',fr:'"Chéri(e), l\'écran est fatigué comme nous. Ce soir on raconte une histoire ensemble."',ar:'"حبيبي، الشاشة تعبت مثلنا. الحين نحكي قصة مع بعض."'},
+    example:{en:"Lina, 6, took 2 hours to sleep with nightly screen time. After 5 days of the ritual: asleep in 25 minutes. Her mom said she started asking for 'story time' herself.",fr:null,ar:null} },
+
+  { day:4, theme:"The Visual Timer", duration:"5 min",
+    problem:{en:"Children have no concept of time. '5 more minutes' means nothing to a 3-7 year old. They need a visual signal to understand that time is ending.",fr:"Les enfants n'ont pas la notion du temps. '5 minutes' ne veut rien dire pour un enfant de 3-7 ans.",ar:"الأطفال لا يفهمون الوقت. '5 دقائق' لا معنى لها لطفل 3-7 سنوات."},
+    reactions:{en:["Ignores verbal time warnings completely","Genuine shock and betrayal when screen turns off","Claims 'you didn't tell me!' even when you did","Escalating demands each time"],fr:["Ignore les avertissements verbaux","Choc sincère quand l'écran s'éteint","'Tu ne m'avais pas dit!'"],ar:["يتجاهل التحذيرات اللفظية","صدمة حقيقية عند إيقاف الشاشة","'ما قلتيلي!'"]},
+    exercise:{en:{title:"Introduce the Magic Timer",steps:["Get any visual timer (hourglass, kitchen timer, phone alarm)","Before EVERY screen session: show the timer","Say: 'When it rings, we turn off. Deal?'","When it rings: turn off immediately, no extensions","After 3 days: child will start monitoring timer themselves"]},fr:{title:"Introduisez le Minuteur Magique",steps:["Prenez n'importe quel minuteur visuel","Avant CHAQUE session: montrez le minuteur","Dites: 'Quand ça sonne, on éteint. D'accord?'","Quand ça sonne: éteignez immédiatement"]},ar:{title:"قدّمي المؤقت السحري",steps:["اجدي أي مؤقت مرئي","قبل كل جلسة: أريه المؤقت","قولي: 'لما يرن، نطفيها. اتفقنا؟'","لما يرن: أطفئي فوراً بدون تمديد"]}},
+    script:{en:'"Look, the timer is starting now. When it rings — that\'s our signal. You\'re in charge of watching it."',fr:null,ar:null},
+    example:{en:"Yassine, 5, had daily meltdowns. His mom used a 15-min hourglass. In 5 days, Yassine turned the hourglass himself and said 'Mom it's done!'",fr:"Yassine, 5 ans, faisait des crises quotidiennes. En 5 jours, Yassine retournait le sablier lui-même.",ar:"ياسين (5 سنوات) كانت لديه أزمات يومية. في 5 أيام، كان ياسين يقلب الساعة الرملية بنفسه."} },
+
+  { day:5, theme:"The Ideas Wall", duration:"20 min",
+    problem:{en:"Children use screens because they're bored. Boredom is healthy — it's the engine of creativity. But screen-habituated children no longer know how to be bored constructively.",fr:"L'enfant utilise les écrans parce qu'il s'ennuie. L'ennui est sain. Mais l'enfant habitué aux écrans ne sait plus s'ennuyer sainement.",ar:"الطفل يستخدم الشاشات لأنه يملّ. الملل صحي. لكن الطفل المعتاد على الشاشات لم يعد يعرف يملّ بشكل بنّاء."},
+    reactions:{en:["'I'm bored!' immediately after screen off","Inability to start any activity independently","Agitation, pacing, looking lost","Follows parent everywhere asking for entertainment"],fr:["'Je m'ennuie!' dès que l'écran s'éteint","Incapacité à commencer une activité seul"],ar:["'ملان!' فوراً بعد الشاشة","عجز عن البدء بأي نشاط وحده"]},
+    exercise:{en:{title:"Create the Ideas Wall",steps:["Take a large paper and stick it on any wall","Draw or write 10 simple activities with pictures","Include: Drawing 🎨 | Puzzle 🧩 | Songs 🎵 | Watering plants 🌿 | Simple cooking 🍪","When child says 'I'm bored' → point to wall → 'Choose one!'","Rotate activities weekly to keep it fresh"]},fr:{title:"Créez le Mur des Idées",steps:["Collez une grande feuille au mur","Dessinez 10 activités simples","Incluez: Dessin, Puzzle, Chansons, Arrosage, Cuisine","Quand 'je m'ennuie' → pointez le mur → 'Choisis!'"]},ar:{title:"اصنعي جدار الأفكار",steps:["ألصقي ورقة كبيرة على أي جدار","ارسمي 10 أنشطة بسيطة بالصور","أضيفي: رسم، أحجية، أغاني، ري نباتات، طبخ بسيط","عند 'ملان' → أشيري للجدار → 'اختار!'","غيّري الأنشطة أسبوعياً للتجديد"]}},
+    script:{en:'"Boredom is actually really good! It means your brain is getting ready to create something amazing. What do you think it\'ll invent?"',fr:null,ar:null},
+    example:null },
+
+  { day:6, theme:"Explain It Simply", duration:"10 min",
+    problem:{en:"Rules without explanations don't work. A child who understands WHY accepts limits better. Their brain is not defective — it's just very responsive to reward.",fr:"Les règles sans explication ne fonctionnent pas. L'enfant qui comprend POURQUOI accepte mieux les limites.",ar:"القواعد بدون شرح لا تنجح. الطفل الذي يفهم لماذا يقبل الحدود بشكل أفضل."},
+    reactions:{en:["'Why?' to every rule (this is actually healthy!)","Testing limits to see if you mean it","Negotiating constantly","Telling other adults you're 'mean'"],fr:["'Pourquoi?' à chaque règle","Teste les limites","Négocie constamment"],ar:["'ليش؟' لكل قاعدة","يختبر الحدود","يتفاوض باستمرار"]},
+    exercise:{en:{title:"The Brain Explanation",steps:["Sit with your child at eye level","Explain in simple words (script below)","Ask: 'Does that make sense?'","Let them ask questions","Don't lecture — make it a curious conversation"]},fr:{title:"L'Explication du Cerveau",steps:["Asseyez-vous à hauteur de l'enfant","Expliquez simplement","Demandez: 'Tu comprends?'","Laissez-les poser des questions"]},ar:{title:"شرح الدماغ",steps:["اجلسي مع طفلك على مستواه","اشرحي ببساطة (النص أدناه)","اسأليه: 'فهمت؟'","اتركيه يسأل أسئلة"]}},
+    script:{en:'"Do you know why the TV tires your eyes? Because your brain works REALLY hard to see all those images. And when the brain gets tired, you get tired too — and a bit grumpy. That\'s why we take breaks. Not as punishment — to help your brain stay strong."',fr:'"Tu sais pourquoi la télé fatigue tes yeux? Parce que ton cerveau travaille très fort. Et quand il est fatigué, tu l\'es aussi."',ar:'"تعرف ليش التلفزيون يتعب عيونك؟ لأن دماغك يشتغل بقوة جداً. ولما الدماغ يتعب، إنت تتعب وتصير عصبي. عشان كذا نأخذ استراحات — مش عقاباً، بل لتقوية دماغك."'},
+    example:null },
+
+  { day:7, theme:"Week 1 Review", duration:"15 min",
+    problem:{en:"Reflection is as important as action. Taking stock of Week 1 helps you see what's working and adjust what isn't — without judgment.",fr:"La réflexion est aussi importante que l'action. Le bilan de la semaine 1 vous aide à voir ce qui fonctionne.",ar:"التأمل مهم مثل العمل. مراجعة الأسبوع الأول تساعدك على رؤية ما ينجح وتعديل ما لا ينجح."},
+    reactions:{en:["You may feel the progress is slow — that's normal","Your child may still have occasional meltdowns — expected","Some days will feel like 3 steps forward, 2 back"],fr:["Le progrès peut sembler lent — c'est normal","Des crises occasionnelles — attendues"],ar:["قد يبدو التقدم بطيئاً — هذا طبيعي","أزمات عرضية — متوقعة"]},
+    exercise:{en:{title:"Week 1 Reflection Checklist",steps:["✅ Did I observe my child's habits? (Day 1)","✅ Is the Emergency Box ready? (Day 2)","✅ Have we started a bedtime ritual? (Day 3)","✅ Am I using a visual timer? (Day 4)","✅ Is the Ideas Wall up? (Day 5)","✅ Did I explain screens to my child? (Day 6)"]},fr:{title:"Bilan Semaine 1",steps:["✅ J'ai observé les habitudes?","✅ La boîte de secours est prête?","✅ Le rituel du soir a commencé?","✅ Le minuteur est utilisé?","✅ Le mur des idées est affiché?","✅ J'ai expliqué les écrans?"]},ar:{title:"مراجعة الأسبوع الأول",steps:["✅ راقبت عادات طفلي؟","✅ صندوق الطوارئ جاهز؟","✅ بدأت طقس المساء؟","✅ أستخدم المؤقت؟","✅ جدار الأفكار معلق؟","✅ شرحت الشاشات لطفلي؟"]}},
+    script:null, example:null },
+
+  { day:8, theme:"Reduce by 15 Minutes", duration:"30 min",
+    problem:{en:"Cutting screens suddenly creates a void. You must replace each removed hour with an equivalent pleasure activity — or the child will resist fiercely.",fr:"Réduire les écrans d'un coup crée un vide. Il faut remplacer chaque heure supprimée par une activité équivalente.",ar:"تقليص الشاشات فجأة يخلق فراغاً. يجب استبدال كل ساعة بنشاط ممتع مكافئ."},
+    reactions:{en:["'That's not fair!' — typical, expected","Testing if the new limit is real","May seem extra bored and lethargic initially","Will eventually adapt within 3-5 days"],fr:["'C'est pas juste!' — typique, attendu","Teste si la nouvelle limite est réelle"],ar:["'هذا مش عدل!' — طبيعي ومتوقع","يختبر إذا الحد الجديد حقيقي"]},
+    exercise:{en:{title:"The 15-Minute Reduction",steps:["Reduce today's screen time by exactly 15 minutes","Ages 3-5: replace with playdough or building blocks","Ages 6-9: replace with board games (dominos, memory)","Ages 10+: 15 min of free reading","NEVER say 'you can't watch.' ALWAYS say 'let's do something even more fun.'"]},fr:{title:"La Réduction de 15 Minutes",steps:["Réduisez de 15 min aujourd'hui","3-5 ans: pâte à modeler ou construction","6-9 ans: jeux de société","10+: lecture libre 15 min","Jamais 'tu ne peux pas'. Toujours 'faisons quelque chose de plus fun.'"]},ar:{title:"تقليص 15 دقيقة",steps:["قلّصي وقت الشاشة 15 دقيقة اليوم","3-5 سنوات: صلصال أو بناء","6-9: ألعاب لوحية","10+: قراءة حرة 15 دقيقة","لا تقولي أبداً 'ما تقدرش'. قولي دائماً 'نعمل شي أحلى'."]}},
+    script:{en:'"Before your show, let\'s do something — then your show will feel even better as a reward!"',fr:null,ar:null},
+    example:null },
+
+  { day:9, theme:"The Heart Weather", duration:"15 min",
+    problem:{en:"Children often use screens to manage emotions. Sad → screen. Anxious → screen. Bored → screen. They need other emotional regulation tools.",fr:"Les enfants utilisent souvent les écrans pour gérer leurs émotions. Il faut leur donner d'autres outils émotionnels.",ar:"الأطفال يستخدمون الشاشات لإدارة مشاعرهم. يحتاجون أدوات عاطفية أخرى."},
+    reactions:{en:["Cannot identify or name their emotions","'I don't know' when asked how they feel","Physical symptoms instead of emotional words (stomachache = sadness)","Uses screens immediately when any emotion peaks"],fr:["Ne peut pas nommer ses émotions","'Je sais pas' quand on lui demande comment il va"],ar:["لا يستطيع تسمية مشاعره","'ما أعرف' عند السؤال عن حاله"]},
+    exercise:{en:{title:"The Heart Weather Check-In",steps:["Teach 4 weather states: ☀️ Happy  🌧️ Sad  ⛈️ Angry  🌫️ Tired","Every evening ask: 'What's your heart's weather today?'","If positive ☀️: celebrate and share","If negative: offer a hug, a song, or drawing — NEVER a screen","Make it a ritual: same time, same place each day"]},fr:{title:"La Météo du Cœur",steps:["Apprenez: ☀️ Content  🌧️ Triste  ⛈️ En colère  🌫️ Fatigué","Chaque soir: 'Quelle est ta météo du cœur?'","Si négatif: câlin, chanson, dessin — PAS un écran","Même rituel chaque soir"]},ar:{title:"طقس القلب",steps:["علّمي: ☀️ مبسوط  🌧️ حزين  ⛈️ زعلان  🌫️ تعبان","كل مساء: 'كيف طقس قلبك اليوم؟'","إذا سلبي: عناق أو أغنية أو رسم — ليس شاشة","نفس الطقس كل مساء"]}},
+    script:{en:'"I can see you\'re [feeling]. That makes sense. Let\'s take 3 deep breaths together and then figure out what your heart needs."',fr:null,ar:null},
+    example:null },
+
+  { day:10, theme:"Screen-Free Table", duration:"Mealtime",
+    problem:{en:"Meals with screens prevent mindful eating, stop family connection, and reinforce screen dependency. The table is your most powerful ritual space.",fr:"Les repas avec écrans empêchent l'alimentation consciente et la connexion familiale. La table est votre espace rituel le plus puissant.",ar:"الأكل مع الشاشات يمنع الأكل الواعي وتواصل الأسرة. الطاولة هي أقوى مكان للطقوس العائلية."},
+    reactions:{en:["'But we always watch during dinner!'","Child eats less without screen distraction (this is healthy!)","Initial awkward silence at the table","'What do we talk about?'"],fr:["'Mais on regarde toujours pendant le dîner!'","L'enfant mange moins sans distraction (c'est sain!)"],ar:["'بس احنا دايماً نشوف وقت الأكل!'","الطفل يأكل أقل بدون تشتيت (هذا صحي!)"]},
+    exercise:{en:{title:"The Screen-Free Table Rule",steps:["Phones turned face-down on the table","No TV during any meal","Prepare one conversation question before each meal","Today's question: 'What made you smile today?'","Bonus: 'What's one thing you wish you could change today?'"]},fr:{title:"La Règle Table Sans Écran",steps:["Téléphones retournés","Pas de TV pendant les repas","Préparez une question avant chaque repas","Aujourd'hui: 'Qu'est-ce qui t'a fait sourire?'"]},ar:{title:"قاعدة الطاولة بدون شاشة",steps:["هواتف مقلوبة على الطاولة","لا تلفزيون أثناء أي وجبة","جهّزي سؤالاً قبل كل وجبة","اليوم: 'شو اشي خلاك تبتسم اليوم؟'"]}},
+    script:{en:'"This is our family time. The phones are resting. Let\'s actually see each other."',fr:'"C\'est notre temps de famille. Les téléphones se reposent. Regardons-nous vraiment."',ar:'"هذا وقتنا كعيلة. الهواتف ترتاح. يلا نشوف بعض فعلياً."'},
+    example:null },
+
+  { day:11, theme:"Daily Physical Activity", duration:"20 min",
+    problem:{en:"Movement produces natural dopamine — the same pleasure as screens. A physically active child craves screens less and sleeps better.",fr:"Le mouvement produit de la dopamine naturelle — le même plaisir que les écrans. Un enfant physiquement actif réclame moins d'écrans.",ar:"الحركة تُنتج دوبامين طبيعي — نفس متعة الشاشات. الطفل النشيط بدنياً يطلب شاشات أقل."},
+    reactions:{en:["'I don't want to move!' initially","Becomes naturally energetic once started","Much better mood after physical activity","Easier to accept screen limits on active days"],fr:["'Je ne veux pas bouger!' au début","Meilleure humeur après l'activité physique"],ar:["'ما أبغى أتحرك!' في البداية","مزاج أفضل بكثير بعد النشاط البدني"]},
+    exercise:{en:{title:"Choose Your Daily Movement",steps:["Ages 3-5: Free dance to music (10 min)","Ages 6-9: Bicycle, jump rope, or tag (20 min)","Ages 10+: Brisk walk or sport (20 min)","CRITICAL: Do it WITH your child the first 5 days","Children don't do what you say — they do what you do"]},fr:{title:"Choisissez Votre Activité Quotidienne",steps:["3-5 ans: danse libre sur musique","6-9 ans: vélo, corde à sauter","10+: marche rapide ou sport","CRUCIAL: Faites-le AVEC votre enfant les 5 premiers jours"]},ar:{title:"اختاري نشاطك اليومي",steps:["3-5 سنوات: رقص حر على موسيقى","6-9: دراجة أو حبل قفز","10+: مشي سريع أو رياضة","مهم جداً: افعليه معه أول 5 أيام","الأطفال لا يفعلون ما تقولين — يفعلون ما تفعلين"]}},
+    script:null, example:null },
+
+  { day:12, theme:"Free Creativity", duration:"30 min",
+    problem:{en:"Creative play recalibrates the brain toward patience, focus, and intrinsic satisfaction. It's the opposite of screen entertainment which is always externally driven.",fr:"Le jeu créatif recalibre le cerveau vers la patience et la concentration. C'est l'opposé des écrans.",ar:"اللعب الإبداعي يُعيد ضبط الدماغ نحو الصبر والتركيز. هو عكس الشاشات."},
+    reactions:{en:["'I don't know what to draw/make'","Wanting approval for everything they create","Frustrated if result isn't 'perfect'","Gradually becomes absorbed and focused"],fr:["'Je sais pas quoi faire'","Veut l'approbation pour tout"],ar:["'ما أعرف شو أرسم'","يريد موافقتك على كل شيء"]},
+    exercise:{en:{title:"The No-Rules Creative Hour",steps:["Give paper, crayons, glue, magazines, anything","Say: 'Make whatever you want. No rules.'","DO NOT judge or correct the result","Say ONLY: 'Tell me about what you made'","Never say 'that's wrong' or 'try this instead'"]},fr:{title:"L'Heure Créative Sans Règles",steps:["Donnez papier, crayons, colle, magazines","Dites: 'Fais ce que tu veux. Pas de règles.'","NE JUGEZ PAS le résultat","Dites seulement: 'Raconte-moi ce que tu as fait'"]},ar:{title:"ساعة الإبداع الحر",steps:["أعطيه ورقاً وأقلاماً وصمغاً ومجلات","قولي: 'اعمل ما تريد. لا قواعد.'","لا تحكمي على النتيجة أبداً","قولي فقط: 'احكيلي شو عملت'"]}},
+    script:{en:'"There\'s no wrong way to be creative. I love seeing how YOUR brain works."',fr:null,ar:null},
+    example:null },
+
+  { day:13, theme:"The 15-Minute Special", duration:"15 min",
+    problem:{en:"Children often demand screens for ATTENTION, not entertainment. 15 minutes of undivided parent attention reduces screen demands by up to 40%.",fr:"Les enfants réclament souvent les écrans pour l'ATTENTION. 15 minutes d'attention parentale réduit les demandes d'écran de 40%.",ar:"الأطفال غالباً يطلبون الشاشات من أجل الانتباه. 15 دقيقة من انتباه الوالدين يقلل طلبات الشاشة 40%."},
+    reactions:{en:["Initially confused by your full attention","May test you ('but what about my show?')","Gradually opens up and engages deeply","Starts initiating the special time themselves"],fr:["Confus d'abord par votre attention totale","Finit par s'ouvrir et s'engager profondément"],ar:["في البداية مرتبك من انتباهك الكامل","يبدأ بالانفتاح والتفاعل العميق"]},
+    exercise:{en:{title:"The Special 15 Minutes",steps:["Set a 15-min timer","Your phone is completely away","Do WHATEVER the child chooses (within reason)","Zero corrections, zero judgments","This is their time — you're just there fully","End with: 'That was our special time. I love it.'"]},fr:{title:"Les 15 Minutes Spéciales",steps:["Minuteur 15 min","Téléphone complètement rangé","Faites CE QUE L'ENFANT CHOISIT","Aucune correction, aucun jugement","Terminez: 'C'était notre temps spécial.'"]},ar:{title:"الـ15 دقيقة الخاصة",steps:["اضبطي مؤقت 15 دقيقة","هاتفك مرفوع تماماً","افعلي ما يختاره الطفل (في الحدود المعقولة)","لا تصحيح، لا أحكام","هذا وقته — كوني موجودة كلياً","انهي بـ: 'هذا كان وقتنا الخاص. أحبه.'"]}},
+    script:null, example:null },
+
+  { day:14, theme:"Week 2 Review", duration:"10 min",
+    problem:{en:"Mid-point check. Celebrate what's working. Adjust what isn't. There's no failure — only data.",fr:"Point mi-parcours. Célébrez ce qui fonctionne. Ajustez ce qui ne fonctionne pas.",ar:"نقطة المنتصف. احتفلي بما ينجح. عدّلي ما لا ينجح."},
+    reactions:{en:["Some days will still be hard — that's progress, not failure","You may notice subtle improvements you haven't logged","Child may be testing if the new normal is permanent"],fr:["Certains jours seront encore difficiles — c'est du progrès","Vous remarquez peut-être des améliorations subtiles"],ar:["بعض الأيام ستكون صعبة — هذا تقدم، ليس فشلاً","قد تلاحظين تحسينات دقيقة لم تسجّليها"]},
+    exercise:{en:{title:"Week 2 Progress Check",steps:["Child accepts screen limits more easily?","Crises less intense than Week 1?","Child plays alone for a few minutes without screens?","Mealtimes calmer?","What's the screen time now vs Day 1?"]},fr:{title:"Bilan Semaine 2",steps:["L'enfant accepte mieux les limites?","Les crises sont moins intenses qu'en semaine 1?","L'enfant joue seul quelques minutes sans écran?","Les repas sont plus calmes?","Temps d'écran actuel vs Jour 1?"]},ar:{title:"مراجعة الأسبوع الثاني",steps:["الطفل يقبل الحدود بشكل أفضل؟","الأزمات أقل حدة من الأسبوع الأول؟","الطفل يلعب وحده بعض الوقت بدون شاشة؟","وجبات الطعام أهدأ؟","وقت الشاشة الآن مقارنة باليوم الأول؟"]}},
+    script:null, example:null },
+
+  { day:15, theme:"Family Screen Rules", duration:"20 min",
+    problem:{en:"Rules imposed by parents are resisted. Rules co-created with children are respected. Ownership changes everything.",fr:"Les règles imposées sont résistées. Les règles co-créées avec les enfants sont respectées.",ar:"القواعد المفروضة تُقاوم. القواعد التي صنعها الأطفال معك تُحترم."},
+    reactions:{en:["Child takes the rules seriously when they helped make them","May remind YOU when you break a rule (good!)","Creates sense of family team rather than parent vs child"],fr:["L'enfant prend les règles au sérieux quand il les a créées","Peut vous rappeler quand vous brisez une règle!"],ar:["الطفل يأخذ القواعد بجدية عندما شارك في صنعها","قد يذكّرك عندما تخرقين القاعدة (ممتاز!)"]},
+    exercise:{en:{title:"Create Your Family Screen Rules Together",steps:["Sit together as a family","Brainstorm: 'What rules should we have about screens?'","Suggested rules: screens off 1h before bed, no screens at meals, weekends: 1h morning + 1h evening max, ask permission before turning on","Write rules on paper, everyone signs, post on fridge","Review rules in 2 weeks and adjust together"]},fr:{title:"Créez les Règles Écrans Ensemble",steps:["Asseyez-vous ensemble en famille","Brainstorm: 'Quelles règles pour les écrans?'","Règles suggérées: écrans off 1h avant lit, pas d'écrans aux repas, weekend: 1h matin + 1h soir max, demander permission","Écrivez, signez, affichez sur le frigo"]},ar:{title:"اصنعوا قواعد الشاشات معاً",steps:["اجلسوا معاً كعائلة","تداولوا: 'ما القواعد التي نريدها للشاشات؟'","قواعد مقترحة: شاشات off ساعة قبل النوم، لا شاشات وقت الأكل، عطلة: ساعة صباحاً + ساعة مساءً، طلب إذن قبل التشغيل","اكتبوا ووقّعوا وعلّقوا على الثلاجة"]}},
+    script:{en:'"These are OUR family\'s rules. We all made them together. They belong to all of us."',fr:'"Ce sont les règles de NOTRE famille. Nous les avons créées ensemble."',ar:'"هذه قواعد عائلتنا. صنعناها معاً. هي لكلنا."'},
+    example:null },
+
+  { day:16, theme:"Quality Over Quantity", duration:"20 min",
+    problem:{en:"Not all screen time is equal. Short-form auto-playing videos train short attention spans and impulsive dopamine seeking. Long-form content builds focus and curiosity.",fr:"Tout le temps d'écran ne se vaut pas. Les vidéos courtes forment des périodes d'attention courtes. Le contenu long-format construit la concentration.",ar:"ليس كل وقت الشاشة متساوياً. مقاطع الفيديو القصيرة تُكوّن فترات انتباه قصيرة. المحتوى الطويل يبني التركيز."},
+    reactions:{en:["Child can't watch anything longer than 5 minutes","Jumps from video to video constantly","Can't remember what they just watched"],fr:["L'enfant ne peut pas regarder plus de 5 minutes","Saute de vidéo en vidéo constamment"],ar:["لا يستطيع مشاهدة شيء أطول من 5 دقائق","يقفز من فيديو لآخر باستمرار"]},
+    exercise:{en:{title:"Replace, Don't Just Remove",steps:["Today: watch 20 min of a nature documentary TOGETHER","After: ask 3 questions: 'What did you learn? What did you like? What do you want to know more about?'","Gradually replace short-form with: full movies, documentaries, educational shows","Rule: if content auto-plays, it's not quality content"]},fr:{title:"Remplacer, pas Supprimer",steps:["Aujourd'hui: regardez 20 min de documentaire nature ENSEMBLE","Après: posez 3 questions: 'Tu as appris quoi? Tu as aimé quoi? Tu veux savoir quoi de plus?'","Remplacez progressivement par: films complets, documentaires"]},ar:{title:"استبدلي، لا تحذفي فقط",steps:["اليوم: شاهدوا 20 دقيقة من وثائقي طبيعة معاً","بعده: اسألي 3 أسئلة: 'شو تعلمت؟ شو أحببت؟ شو تبغى تعرف أكثر؟'","استبدلي تدريجياً بـ: أفلام كاملة، وثائقيات"]}},
+    script:null, example:null },
+
+  { day:17, theme:"Nature as Medicine", duration:"30 min",
+    problem:{en:"Nature is the best nervous system regulator for children. Even 20 minutes outdoors reduces cortisol, improves focus, and decreases screen cravings.",fr:"La nature est le meilleur régulateur du système nerveux de l'enfant. Même 20 minutes dehors réduit le cortisol et diminue les envies d'écran.",ar:"الطبيعة هي أفضل منظّم للجهاز العصبي للطفل. حتى 20 دقيقة في الخارج تقلل الكورتيزول وتقلل الرغبة في الشاشات."},
+    reactions:{en:["Initial resistance ('it's hot/cold/boring outside')","Becomes naturally curious once outdoors","Much better mood and compliance after outdoor time","Sleeps better on days with outdoor activity"],fr:["Résistance initiale ('c'est ennuyeux dehors')","Devient naturellement curieux à l'extérieur"],ar:["مقاومة أولية ('في الخارج ممل')","يصبح فضولياً طبيعياً في الخارج"]},
+    exercise:{en:{title:"The Explorer Walk",steps:["Go outside for 30 minutes (any outdoor space works)","The Explorer Game: child must find...","→ 3 things of different colors","→ 1 insect or animal","→ 1 smell they can't identify","→ The roughest texture they can find","No phones for parents either during this walk"]},fr:{title:"La Promenade Chercheur",steps:["Sortez 30 minutes (n'importe quel espace extérieur)","Le jeu: l'enfant doit trouver...","→ 3 choses de couleurs différentes","→ 1 insecte ou animal","→ 1 odeur inconnue","→ La texture la plus rugueuse","Pas de téléphone pour les parents non plus"]},ar:{title:"نزهة المستكشف",steps:["اخرجوا 30 دقيقة (أي مكان خارجي يكفي)","اللعبة: يجد الطفل...","→ 3 أشياء بألوان مختلفة","→ حشرة أو حيوان","→ رائحة لا يعرفها","→ أخشن ملمس يجده","لا هاتف للآباء أيضاً خلال هذه النزهة"]}},
+    script:null, example:null },
+
+  { day:18, theme:"Handling Relapses", duration:"As needed",
+    problem:{en:"Relapses are 100% normal. They are not failure. They are data. The way you respond to a relapse determines whether it becomes a setback or a lesson.",fr:"Les rechutes sont 100% normales. Ce ne sont pas des échecs. C'est de la donnée. Votre réponse détermine si c'est un revers ou une leçon.",ar:"الانتكاسات طبيعية 100%. ليست فشلاً. هي معلومات. طريقة تعاملك معها تحدد إذا كانت نكسة أو درساً."},
+    reactions:{en:["Large tantrum after you said no","Child got hold of device without permission","You caved and gave screen to stop the crying","Child discovered YouTube on your phone during weak moment"],fr:["Grande crise après votre refus","L'enfant a eu accès à l'appareil sans permission","Vous avez cédé pour arrêter les pleurs"],ar:["أزمة كبيرة بعد رفضك","الطفل وصل للجهاز بدون إذن","أذعنت وأعطيته الشاشة لإيقاف البكاء"]},
+    exercise:{en:{title:"The Relapse Protocol",steps:["First: take 3 deep breaths yourself","DO NOT shame or lecture the child","DO NOT give the screen (even to stop crying)","Say the script below calmly","Wait for the storm to pass — it always does","Hug. Reset. Continue. No drama."]},fr:{title:"Le Protocole de Rechute",steps:["D'abord: prenez 3 respirations profondes","Ne shaming pas, ne donnez pas de leçon","Ne donnez PAS l'écran (même pour arrêter les pleurs)","Dites le script ci-dessous calmement","Attendez que la crise passe — ça arrive toujours","Câlinez. Recommencez. Continuez."]},ar:{title:"بروتوكول الانتكاسة",steps:["أولاً: خذي 3 أنفاس عميقة","لا تعنّفي أو تلومي","لا تعطي الشاشة (حتى لإيقاف البكاء)","قولي النص أدناه بهدوء","انتظري حتى تمر العاصفة — دائماً تمر","احتضني. أعيدي الضبط. أكملي."]}},
+    script:{en:'"I can see you\'re really upset. That makes sense — your brain really wants the screen. I love you. The answer is still no. We\'re going to breathe together and then find something else."',fr:'"Je vois que tu es très en colère. C\'est normal. Je t\'aime. La réponse est toujours non. On va respirer ensemble."',ar:'"شايفك زعلان برشا. هذا طبيعي. نحبك. الجواب لا. رح نتنفس مع بعض ونلاقي شي ثاني."'},
+    example:null },
+
+  { day:19, theme:"Real Social Play", duration:"1 hour",
+    problem:{en:"Real social play is neurologically richer than any screen. It develops empathy, negotiation, emotional regulation, and creativity simultaneously.",fr:"Le jeu social réel est neurologiquement plus riche que n'importe quel écran. Il développe l'empathie, la négociation et la créativité.",ar:"اللعب الاجتماعي الحقيقي أغنى عصبياً من أي شاشة. يطوّر التعاطف والتفاوض والإبداع في آن واحد."},
+    reactions:{en:["May initially need adult facilitation","Conflicts with other children (healthy and necessary)","Learns to negotiate and compromise","Becomes naturally engaged within minutes"],fr:["Peut nécessiter facilitation adulte au début","Des conflits avec d'autres enfants (sains et nécessaires)"],ar:["قد يحتاج تيسيراً من بالغ في البداية","خلافات مع أطفال آخرين (صحية وضرورية)"]},
+    exercise:{en:{title:"Arrange Real Social Play",steps:["Organize a playdate with one other child","Or visit cousins/neighbors for free play","Let them play without constant adult intervention","If conflict arises: don't solve it — coach them","Say: 'How can you two figure this out?'","If impossible to arrange: video call + play game together"]},fr:{title:"Organisez du Jeu Social Réel",steps:["Organisez un jeu avec un autre enfant","Ou visitez cousins/voisins pour jeu libre","Laissez-les jouer sans intervention constante","Si conflit: ne résolvez pas — coachez-les","Dites: 'Comment pouvez-vous régler ça tous les deux?'"]},ar:{title:"رتّبي لعباً اجتماعياً حقيقياً",steps:["رتّبي لقاء مع طفل آخر","أو زوروا أقارب أو جيراناً","دعيهم يلعبون بدون تدخل مستمر","إذا حدث خلاف: لا تحلّي — كوّنيهم","قولي: 'كيف تقدرون تحلوا هذا بأنفسكم؟'"]}},
+    script:null, example:null },
+
+  { day:20, theme:"Parent Screen Audit", duration:"10 min",
+    problem:{en:"Children imitate, they don't obey. If you reduce your own screen time, the child follows naturally. Your phone habits are the most powerful variable in this program.",fr:"Les enfants imitent, ils n'obéissent pas. Si vous réduisez votre propre temps d'écran, l'enfant suit naturellement.",ar:"الأطفال يقلّدون ولا يطيعون. إذا قلّصتِ وقت شاشتك، سيتبعك الطفل تلقائياً."},
+    reactions:{en:["Child calls you out: 'But YOU'RE on your phone!'","This is a good sign — they're learning the rules","Use it as a teaching moment, not a power struggle"],fr:["L'enfant vous dit: 'Mais TOI tu es sur ton téléphone!'","C'est un bon signe — ils apprennent les règles"],ar:["الطفل يقول: 'بس إنتِ على هاتفك!'","هذه علامة جيدة — يتعلم القواعد"]},
+    exercise:{en:{title:"Honest Parent Audit",steps:["Answer honestly (no one is judging you)","Do I use my phone often in front of my child?","Do I respond to them while looking at my phone?","Do I check my phone at the dinner table?","Do I follow the rules I've set?","What ONE phone habit will I change starting today?"]},fr:{title:"Audit Honnête du Parent",steps:["Répondez honnêtement (personne ne vous juge)","Est-ce que j'utilise mon téléphone souvent devant mon enfant?","Est-ce que je lui réponds en regardant mon téléphone?","Est-ce que je vérifie mon téléphone à table?","Est-ce que je respecte les règles que j'ai fixées?"]},ar:{title:"مراجعة الوالد الصادقة",steps:["أجيبي بصدق (لا أحد يحكم عليك)","هل أستخدم هاتفي كثيراً أمام طفلي؟","هل أردّ عليه وأنا أنظر للهاتف؟","هل أتحقق من هاتفي على الطاولة؟","هل أحترم أنا القواعد التي وضعتها؟"]}},
+    script:{en:'"You\'re right, I was on my phone. That\'s not following our rule. Thank you for reminding me. I\'m putting it down now."',fr:'"Tu as raison, j\'étais sur mon téléphone. Merci de me le rappeler. Je le pose maintenant."',ar:'"أنت محق، كنت على هاتفي. هذا لا يتبع قاعدتنا. شكراً لتذكيري. أضعه الآن."'},
+    example:null },
+
+  { day:21, theme:"Celebrate & Commit", duration:"20 min",
+    problem:{en:"You've completed 21 days. The goal was never perfection — it was progress. Now the real work begins: maintaining new habits.",fr:"Vous avez complété 21 jours. L'objectif n'était jamais la perfection — c'était le progrès. Maintenant commence le vrai travail.",ar:"أكملت 21 يوماً. الهدف لم يكن الكمال أبداً — بل التقدم. الآن يبدأ العمل الحقيقي."},
+    reactions:{en:["Child has noticeably changed habits","Some days are still hard — and always will be","You've built tools you didn't have 3 weeks ago"],fr:["L'enfant a changé de manière visible","Certains jours sont encore difficiles — et le seront toujours","Vous avez construit des outils que vous n'aviez pas"],ar:["الطفل تغير بشكل ملحوظ","بعض الأيام لا تزال صعبة — وستبقى كذلك","بنيتِ أدوات لم تكن لديك منذ 3 أسابيع"]},
+    exercise:{en:{title:"Celebration & Next Commitment",steps:["Review: screen time Day 1 vs today","Celebrate with your child: 'We did this TOGETHER'","Choose one new habit to add in the next 21 days","Write your commitment in the journal below","Share this program with one other parent who needs it"]},fr:{title:"Célébration & Prochain Engagement",steps:["Comparez: temps d'écran jour 1 vs aujourd'hui","Célébrez avec votre enfant: 'On l'a fait ENSEMBLE'","Choisissez une nouvelle habitude pour les 21 prochains jours","Partagez ce programme avec un autre parent"]},ar:{title:"احتفال والتزام جديد",steps:["قارني: وقت الشاشة اليوم الأول مقابل اليوم","احتفلي مع طفلك: 'عملناها معاً'","اختاري عادة جديدة للـ21 يوماً القادمة","شاركي هذا البرنامج مع والد آخر يحتاجه"]}},
+    script:{en:'"We did it. 21 days. Some hard, some easy — all of them worth it. I\'m so proud of us."',fr:'"Nous l\'avons fait. 21 jours. Certains difficiles, certains faciles — tous valaient la peine. Je suis si fier/fière de nous."',ar:'"عملناها. 21 يوماً. بعضها صعب وبعضها سهل — كلها تستحق. أنا فخور/فخورة بنا."'},
+    example:null }
+];
+
+const TIPS = [
+  { tag:"green", tagLabel:"Prevention", icon:"🛡️",
+    title:{en:"The Golden Rule",fr:"La Règle d'Or",ar:"القاعدة الذهبية"},
+    body:{en:"Never say 'you can't watch TV.' Always say 'let's do something even more fun first.' Framing matters more than the rule itself.",fr:"Ne dites jamais 'tu ne peux pas regarder'. Dites toujours 'faisons quelque chose de plus fun d'abord.'",ar:"لا تقولي أبداً 'ما تقدرش تشوف'. قولي دائماً 'نعمل شي أحلى أول'."}},
+  { tag:"amber", tagLabel:"Emergency", icon:"🆘",
+    title:{en:"Meltdown in 3 Steps",fr:"Crise en 3 Étapes",ar:"الأزمة في 3 خطوات"},
+    body:{en:"1. Stay calm (your calm is contagious). 2. Name their feeling: 'I see you're angry.' 3. Offer choice: 'Do you want a hug or do you want to draw?' Never give screen as consolation.",fr:"1. Restez calme. 2. Nommez: 'Je vois que tu es en colère.' 3. Offrez un choix: 'Câlin ou dessin?' Jamais l'écran comme consolation.",ar:"1. ابقي هادئة. 2. سمّي الشعور: 'شايفك زعلان.' 3. أعطي خياراً: 'عناق أو رسم؟' لا شاشة كعزاء."}},
+  { tag:"blue", tagLabel:"Science",  icon:"🧠",
+    title:{en:"The Dopamine Reset",fr:"La Réinitialisation Dopamine",ar:"إعادة ضبط الدوبامين"},
+    body:{en:"After 3 weeks of reduced screens, your child's dopamine baseline naturally resets. Things that used to bore them — books, outdoor play, drawing — become genuinely exciting again. This is why you're doing this.",fr:"Après 3 semaines d'écrans réduits, la baseline dopamine se réinitialise. Les choses qui les ennuyaient — livres, jeu — redeviennent excitantes.",ar:"بعد 3 أسابيع من تقليص الشاشات، يُعاد ضبط خط الدوبامين الأساسي. الأشياء التي كانت تُمللهم — كتب، لعب — تصبح مثيرة فعلاً."}},
+  { tag:"red", tagLabel:"Warning",  icon:"⚠️",
+    title:{en:"Signs of Serious Addiction",fr:"Signes d'Addiction Sérieuse",ar:"علامات الإدمان الشديد"},
+    body:{en:"Consult a professional if: child has aggressive physical outbursts when screen is removed, cannot engage in ANY activity for more than 2 minutes without screen, sleep is severely disrupted despite bedtime routine, academic performance declining sharply.",fr:"Consultez un professionnel si: crises physiques agressives lors du retrait, incapacité à toute activité >2 min sans écran, sommeil gravement perturbé malgré rituel.",ar:"استشيري متخصصاً إذا: نوبات عدوانية جسدية عند السحب، عجز عن أي نشاط >2 دقيقة بدون شاشة، اضطراب شديد في النوم رغم الطقس."}},
+  { tag:"green", tagLabel:"Tip", icon:"💡",
+    title:{en:"Screen-Free Zones",fr:"Zones Sans Écrans",ar:"مناطق خالية من الشاشات"},
+    body:{en:"Designate 2 areas as permanently screen-free: the dining table and all bedrooms. These two zones alone make the biggest difference. Start there before changing other habits.",fr:"Désignez 2 zones sans écrans: la table à manger et toutes les chambres. Ces deux zones font la plus grande différence.",ar:"خصّصي منطقتين خاليتين من الشاشات دائماً: طاولة الطعام وجميع غرف النوم. هاتان المنطقتان وحدهما تصنعان الفرق الأكبر."}},
+  { tag:"amber", tagLabel:"Trick", icon:"🎯",
+    title:{en:"The '10 Minutes First' Rule",fr:"La Règle '10 Minutes d'Abord'",ar:"قاعدة '10 دقائق أولاً'"},
+    body:{en:"Before any screen time, the child does 10 minutes of physical activity first. This isn't punishment — the movement primes the brain, so screen content is actually processed better. And often they forget to ask for the screen.",fr:"Avant chaque écran, l'enfant fait 10 min d'activité physique d'abord. Ce n'est pas une punition — le mouvement prépare le cerveau.",ar:"قبل أي وقت شاشة، يقوم الطفل بـ10 دقائق نشاط بدني أولاً. هذا ليس عقاباً — الحركة تُعدّ الدماغ."}},
+];
+
+// ── TRANSLATIONS ──
+const T = {
+  en: {
+    tabToday:"Today", tabProgress:"Progress", tabTips:"Tips & Scripts",
+    navToday:"Today", navProgress:"Progress", navTips:"Tips",
+    heroGreeting:(d)=>`Day ${d} of 21`,
+    heroTitle:(d)=>d===1?"Let's <span>begin</span> your journey":d===21?"<span>Final</span> day — you made it!":d<=7?"Week 1: <span>Observe</span>":d<=14?"Week 2: <span>Reduce</span>":"Week 3: <span>Maintain</span>",
+    statLabel1:"Days Done", statLabel2:"Streak 🔥", statLabel3:"Hrs Today",
+    todayBadge:"Today's Practice",
+    problem:"The Problem",
+    reactions:"How Children React",
+    exercise:"Today's Exercise",
+    scriptLabel:"Exact Script to Say",
+    exampleLabel:"Real Example",
+    logTitle:"Your Daily Journal",
+    logMood:"How did it go today?",
+    logScreenTime:"Child's screen time today",
+    logNote:"Your observation / reflection",
+    logNotePlaceholder:"What happened? What worked? What was hard?",
+    completeBtn:"Mark Day Complete ✅",
+    completeDone:"✅ Day Complete",
+    chartTitle:"Screen Time Trend (hours)",
+    insightTitle:"Your Progress Insights",
+    celebration:(d)=>({title:`Day ${d} Complete! 🎉`, sub:"You're building something real. Every day counts."}),
+    hours:"hrs",
+  },
+  fr: {
+    tabToday:"Aujourd'hui", tabProgress:"Progrès", tabTips:"Conseils",
+    navToday:"Auj.", navProgress:"Progrès", navTips:"Conseils",
+    heroGreeting:(d)=>`Jour ${d} sur 21`,
+    heroTitle:(d)=>d===1?"Commençons <span>votre</span> voyage":d===21?"<span>Dernier</span> jour !":d<=7?"Semaine 1: <span>Observer</span>":d<=14?"Semaine 2: <span>Réduire</span>":"Semaine 3: <span>Maintenir</span>",
+    statLabel1:"Jours faits", statLabel2:"Série 🔥", statLabel3:"H aujourd'hui",
+    todayBadge:"Pratique du Jour",
+    problem:"Le Problème",
+    reactions:"Réactions de l'Enfant",
+    exercise:"Exercice du Jour",
+    scriptLabel:"Ce que vous dites exactement",
+    exampleLabel:"Exemple Concret",
+    logTitle:"Journal Quotidien",
+    logMood:"Comment ça s'est passé ?",
+    logScreenTime:"Temps d'écran de l'enfant",
+    logNote:"Votre observation / réflexion",
+    logNotePlaceholder:"Qu'est-ce qui s'est passé? Ce qui a marché? Ce qui était difficile?",
+    completeBtn:"Marquer le jour comme fait ✅",
+    completeDone:"✅ Jour Complété",
+    chartTitle:"Évolution du temps d'écran (heures)",
+    insightTitle:"Vos Progrès",
+    celebration:(d)=>({title:`Jour ${d} Complété ! 🎉`, sub:"Vous construisez quelque chose de réel. Chaque jour compte."}),
+    hours:"h",
+  },
+  ar: {
+    tabToday:"اليوم", tabProgress:"التقدم", tabTips:"نصائح",
+    navToday:"اليوم", navProgress:"تقدم", navTips:"نصائح",
+    heroGreeting:(d)=>`اليوم ${d} من 21`,
+    heroTitle:(d)=>d===1?"لنبدأ <span>رحلتك</span>":d===21?"<span>اليوم الأخير</span> — أنجزتِه!":d<=7?"الأسبوع 1: <span>ملاحظة</span>":d<=14?"الأسبوع 2: <span>تقليص</span>":"الأسبوع 3: <span>تثبيت</span>",
+    statLabel1:"أيام منجزة", statLabel2:"تتالي 🔥", statLabel3:"ساعات اليوم",
+    todayBadge:"تمرين اليوم",
+    problem:"المشكلة",
+    reactions:"ردود فعل الطفل",
+    exercise:"تمرين اليوم",
+    scriptLabel:"ما تقولينه بالضبط",
+    exampleLabel:"مثال حقيقي",
+    logTitle:"يومياتك",
+    logMood:"كيف سارت الأمور اليوم؟",
+    logScreenTime:"وقت شاشة الطفل اليوم",
+    logNote:"ملاحظتك / تأملك",
+    logNotePlaceholder:"ماذا حدث؟ ما الذي نجح؟ ما الذي كان صعباً؟",
+    completeBtn:"أنهيت اليوم ✅",
+    completeDone:"✅ اليوم مكتمل",
+    chartTitle:"تطور وقت الشاشة (ساعات)",
+    insightTitle:"إنجازاتك",
+    celebration:(d)=>({title:`اليوم ${d} مكتمل! 🎉`, sub:"أنتِ تبنين شيئاً حقيقياً. كل يوم يُهم."}),
+    hours:"س",
+  }
+};
+
+// ── APP STATE ──
+function loadData() {
+  try { data = JSON.parse(localStorage.getItem('sf21_data') || '{}'); } catch(e) { data = {}; }
+  if (!data.logs) data.logs = {};
+  if (!data.currentDay) data.currentDay = 1;
+  if (!data.completedDays) data.completedDays = [];
+  if (!data.streak) data.streak = 0;
+}
+
+function saveData() {
+  localStorage.setItem('sf21_data', JSON.stringify(data));
+}
+
+function getLog(day) {
+  return data.logs[day] || { mood: null, screenTime: 0, note: '', completed: false };
+}
+
+// ── LANG ──
+let selectedLang = 'en';
+
+function selectLang(l, el) {
+  selectedLang = l;
+  document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startApp() {
+  lang = selectedLang;
+  localStorage.setItem('sf21_lang', lang);
+  document.getElementById('langScreen').classList.remove('show');
+  initApp();
+}
+
+function switchLang(l) {
+  lang = l;
+  localStorage.setItem('sf21_lang', lang);
+  document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-'+l).classList.add('active');
+  document.body.classList.toggle('rtl', l==='ar');
+  refreshUI();
+}
+
+// ── INIT ──
+function initApp() {
+  loadData();
+  document.getElementById('mainNav').style.display = '';
+  document.getElementById('mainApp').style.display = '';
+  document.getElementById('bottomNav').style.display = '';
+  document.body.classList.toggle('rtl', lang==='ar');
+  document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-'+lang).classList.add('active');
+  refreshUI();
+  showPanel('today');
+}
+
+function refreshUI() {
+  const t = T[lang];
+  const day = data.currentDay;
+
+  // Nav labels
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.dataset.key;
+    if (t[key]) el.textContent = t[key];
+  });
+
+  // Hero
+  document.getElementById('heroGreeting').textContent = t.heroGreeting(day);
+  document.getElementById('heroTitle').innerHTML = t.heroTitle(day);
+  document.getElementById('statLabel1').textContent = t.statLabel1;
+  document.getElementById('statLabel2').textContent = t.statLabel2;
+  document.getElementById('statLabel3').textContent = t.statLabel3;
+
+  // Stats
+  const completed = data.completedDays.length;
+  document.getElementById('statDaysCompleted').textContent = completed;
+  document.getElementById('statStreak').textContent = data.streak;
+  const todayLog = getLog(day);
+  document.getElementById('statScreenTime').textContent = todayLog.screenTime > 0 ? todayLog.screenTime + t.hours : '—';
+
+  // Ring
+  const pct = Math.round((completed / 21) * 100);
+  const circ = 94.2;
+  const offset = circ - (pct / 100) * circ;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+  document.getElementById('progressText').textContent = pct + '%';
+
+  // Render panels
+  renderToday();
+  renderProgress();
+  renderTips();
+}
+
+// ── TODAY ──
+function renderToday() {
+  const t = T[lang];
+  const day = data.currentDay;
+  const dayData = DAYS_DATA[day - 1];
+  const log = getLog(day);
+
+  const html = `
+    <div class="today-card">
+      <div class="today-badge">📅 ${t.todayBadge}</div>
+      <div class="today-day">${lang==='ar'?'اليوم':'Day'} ${day} — ${dayData.theme}</div>
+      <div class="today-theme">${dayData.theme}</div>
+      <div class="today-duration">⏱️ ${dayData.duration}</div>
+    </div>
+
+    ${dayData.problem ? `
+    <div class="section-block open">
+      <div class="section-block-header" onclick="toggleBlock(this)">
+        <div class="section-block-icon">🔍</div>
+        <div class="section-block-title">${t.problem}</div>
+        <div class="section-block-arrow">▼</div>
+      </div>
+      <div class="section-block-body">
+        <div class="section-text">${dayData.problem[lang] || dayData.problem.en}</div>
+        ${lang!=='ar'&&dayData.problem.ar?`<div class="section-text-ar">${dayData.problem.ar}</div>`:''}
+      </div>
+    </div>` : ''}
+
+    ${dayData.reactions ? `
+    <div class="section-block">
+      <div class="section-block-header" onclick="toggleBlock(this)">
+        <div class="section-block-icon">😤</div>
+        <div class="section-block-title">${t.reactions}</div>
+        <div class="section-block-arrow">▼</div>
+      </div>
+      <div class="section-block-body">
+        <div class="reaction-box">
+          <div class="reaction-label">${t.reactions}</div>
+          <ul class="reaction-list">
+            ${(dayData.reactions[lang]||dayData.reactions.en).map(r=>`<li>${r}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${dayData.exercise ? `
+    <div class="section-block open">
+      <div class="section-block-header" onclick="toggleBlock(this)">
+        <div class="section-block-icon">✅</div>
+        <div class="section-block-title">${t.exercise}</div>
+        <div class="section-block-arrow">▼</div>
+      </div>
+      <div class="section-block-body">
+        <div class="exercise-box">
+          <div class="exercise-title">✅ ${(dayData.exercise[lang]||dayData.exercise.en).title}</div>
+          <ol class="exercise-steps">
+            ${(dayData.exercise[lang]||dayData.exercise.en).steps.map((s,i)=>`
+              <li><div class="step-num">${i+1}</div><div>${s}</div></li>
+            `).join('')}
+          </ol>
+          ${lang!=='ar'&&dayData.exercise.ar?`<div class="section-text-ar">${dayData.exercise.ar.title}</div>`:''}
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${dayData.script ? `
+    <div class="section-block">
+      <div class="section-block-header" onclick="toggleBlock(this)">
+        <div class="section-block-icon">💬</div>
+        <div class="section-block-title">${t.scriptLabel}</div>
+        <div class="section-block-arrow">▼</div>
+      </div>
+      <div class="section-block-body">
+        <div class="script-box">
+          <div class="script-label">💬 ${t.scriptLabel}</div>
+          <div class="script-text">${dayData.script[lang]||dayData.script.en}</div>
+          ${lang!=='ar'&&dayData.script.ar?`<div class="script-ar">${dayData.script.ar}</div>`:''}
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${dayData.example && (dayData.example[lang]||dayData.example.en) ? `
+    <div class="section-block">
+      <div class="section-block-header" onclick="toggleBlock(this)">
+        <div class="section-block-icon">💡</div>
+        <div class="section-block-title">${t.exampleLabel}</div>
+        <div class="section-block-arrow">▼</div>
+      </div>
+      <div class="section-block-body">
+        <div class="example-box">
+          <div class="example-label">💡 ${t.exampleLabel}</div>
+          <div class="example-text">${dayData.example[lang]||dayData.example.en}</div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <!-- DAILY LOG -->
+    <div class="daily-log">
+      <div class="log-title">📝 ${t.logTitle}</div>
+
+      <div class="log-field">
+        <label class="log-label">${t.logMood}</label>
+        <div class="mood-selector" id="moodSelector">
+          ${['😊','😐','😣','😤','🎉'].map(m=>`
+            <button class="mood-btn ${log.mood===m?'selected':''}" onclick="setMood('${m}')">${m}</button>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="log-field">
+        <label class="log-label">${t.logScreenTime}</label>
+        <div class="screen-time-input">
+          <div class="time-btn" onclick="adjustTime(-0.5)">−</div>
+          <div>
+            <div class="time-display" id="timeDisplay">${log.screenTime}</div>
+            <div class="time-unit">${t.hours}</div>
+          </div>
+          <div class="time-btn" onclick="adjustTime(0.5)">+</div>
+        </div>
+      </div>
+
+      <div class="log-field">
+        <label class="log-label">${t.logNote}</label>
+        <textarea class="log-input" id="noteInput" rows="3"
+          placeholder="${t.logNotePlaceholder}"
+          oninput="saveNote(this.value)">${log.note||''}</textarea>
+      </div>
+
+      <button class="complete-btn ${log.completed?'done':''}"
+        id="completeBtn"
+        onclick="completeDay()"
+        ${log.completed?'disabled':''}>
+        ${log.completed ? t.completeDone : t.completeBtn}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('todayContent').innerHTML = html;
+}
+
+// ── PROGRESS ──
+function renderProgress() {
+  const t = T[lang];
+  const day = data.currentDay;
+
+  // Days grid
+  let gridHtml = '';
+  for (let i = 1; i <= 21; i++) {
+    const completed = data.completedDays.includes(i);
+    const isToday = i === day;
+    const isFuture = i > day;
+    gridHtml += `
+      <div class="day-dot ${completed?'completed':''} ${isToday&&!completed?'today':''} ${isFuture?'future':''}"
+        onclick="${!isFuture?`goToDay(${i})`:''}">
+        ${i}
+        ${completed?'<div class="check">✓</div>':''}
+      </div>`;
+  }
+  document.getElementById('daysGrid').innerHTML = gridHtml;
+
+  // Chart
+  let barsHtml = '';
+  for (let i = 1; i <= 21; i++) {
+    const log = getLog(i);
+    const h = log.screenTime || 0;
+    const maxH = 8;
+    const pct = Math.min(100, (h / maxH) * 100);
+    const cls = h > 5 ? 'high' : h > 2 ? 'med' : 'low';
+    barsHtml += `
+      <div class="chart-bar-wrap">
+        <div class="chart-bar ${cls}" style="height:${pct}%"></div>
+        <div class="chart-label">${i}</div>
+      </div>`;
+  }
+  document.getElementById('chartBars').innerHTML = barsHtml;
+  document.getElementById('chartTitle').textContent = t.chartTitle;
+
+  // Insights
+  const totalScreenTime = Object.values(data.logs).reduce((s, l) => s + (l.screenTime || 0), 0);
+  const avgScreenTime = data.completedDays.length > 0 ? (totalScreenTime / data.completedDays.length).toFixed(1) : 0;
+  const firstLog = data.logs[1];
+  const firstScreenTime = firstLog ? firstLog.screenTime : 0;
+
+  document.getElementById('insightsContainer').innerHTML = `
+    <div class="insight-card">
+      <div class="insight-icon">📊</div>
+      <div class="insight-text">
+        <strong>${lang==='ar'?'متوسط وقت الشاشة':lang==='fr'?'Temps d\'écran moyen':'Average Screen Time'}</strong>
+        ${avgScreenTime} ${t.hours}/day
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">📅</div>
+      <div class="insight-text">
+        <strong>${lang==='ar'?'أيام مكتملة':lang==='fr'?'Jours complétés':'Days Completed'}</strong>
+        ${data.completedDays.length} / 21
+      </div>
+    </div>
+    ${firstScreenTime > 0 ? `
+    <div class="insight-card">
+      <div class="insight-icon">📉</div>
+      <div class="insight-text">
+        <strong>${lang==='ar'?'تحسّن منذ البداية':lang==='fr'?'Amélioration depuis le début':'Improvement Since Day 1'}</strong>
+        ${firstScreenTime} ${t.hours} → ${avgScreenTime} ${t.hours}
+      </div>
+    </div>` : ''}
+  `;
+}
+
+// ── TIPS ──
+function renderTips() {
+  const html = TIPS.map(tip => `
+    <div class="tip-card">
+      <div class="tip-card-header">
+        <div class="tip-tag tag-${tip.tag}">${tip.tagLabel}</div>
+        <div class="tip-card-title">${tip.title[lang]||tip.title.en}</div>
+      </div>
+      <div class="tip-card-body">
+        ${tip.body[lang]||tip.body.en}
+        ${lang!=='ar'&&tip.body.ar?`<div class="ar">${tip.body.ar}</div>`:''}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('tipsContent').innerHTML = html;
+}
+
+// ── INTERACTIONS ──
+function toggleBlock(header) {
+  const block = header.parentElement;
+  block.classList.toggle('open');
+}
+
+function setMood(mood) {
+  const log = getLog(data.currentDay);
+  log.mood = mood;
+  data.logs[data.currentDay] = log;
+  saveData();
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('selected', b.textContent === mood);
+  });
+}
+
+function adjustTime(delta) {
+  const log = getLog(data.currentDay);
+  log.screenTime = Math.max(0, Math.round((log.screenTime + delta) * 10) / 10);
+  data.logs[data.currentDay] = log;
+  saveData();
+  document.getElementById('timeDisplay').textContent = log.screenTime;
+  document.getElementById('statScreenTime').textContent = log.screenTime + T[lang].hours;
+}
+
+function saveNote(val) {
+  const log = getLog(data.currentDay);
+  log.note = val;
+  data.logs[data.currentDay] = log;
+  saveData();
+}
+
+function completeDay() {
+  const day = data.currentDay;
+  const log = getLog(day);
+  log.completed = true;
+  data.logs[day] = log;
+
+  if (!data.completedDays.includes(day)) {
+    data.completedDays.push(day);
+  }
+
+  // Update streak
+  let streak = 0;
+  for (let i = day; i >= 1; i--) {
+    if (data.completedDays.includes(i)) streak++;
+    else break;
+  }
+  data.streak = streak;
+
+  // Advance day
+  if (day < 21) data.currentDay = day + 1;
+
+  saveData();
+  refreshUI();
+  showCelebration(day);
+}
+
+function goToDay(d) {
+  if (d <= data.currentDay) {
+    data.currentDay = d;
+    saveData();
+    refreshUI();
+    showPanel('today');
+  }
+}
+
+function showCelebration(day) {
+  const cel = T[lang].celebration(day);
+  document.getElementById('cel-title').textContent = cel.title;
+  document.getElementById('cel-sub').textContent = cel.sub;
+  document.getElementById('celebration').classList.add('show');
+}
+
+function closeCelebration() {
+  document.getElementById('celebration').classList.remove('show');
+}
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('tab-'+id)?.classList.add('active');
+  document.getElementById('nav-'+id)?.classList.add('active');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ── BOOT ──
+window.addEventListener('load', () => {
+  // Splash
+  setTimeout(() => {
+    document.getElementById('splash').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('splash').style.display = 'none';
+      const savedLang = localStorage.getItem('sf21_lang');
+      if (savedLang) {
+        lang = savedLang;
+        initApp();
+      } else {
+        document.getElementById('langScreen').classList.add('show');
+      }
+    }, 600);
+  }, 1800);
+});
+</script>
+</body>
+</html>
